@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import authenticate, logout
 from .models import User
 from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
 
@@ -57,9 +58,25 @@ class LoginViewSet(viewsets.ViewSet):
         }, status=status.HTTP_200_OK)
         
         response.set_cookie(
-            'refresh', str(refresh), 
+            'refresh_token', str(refresh), 
             httponly = True,
             samesite = 'lax',
             path = 'api/token/refresh/',
             secure = True,
             max_age=7*24*60*60)
+        
+class LogoutViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request):
+        refresh_token = request.COOKIES.get("refresh_token")
+        if refresh_token:
+            try:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+            except Exception:
+                pass
+        logout(request)
+        response = Response({"message": "Logout successful."}, status=status.HTTP_200_OK)
+        response.delete_cookie("refresh_token")
+        return response

@@ -59,6 +59,15 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+USER_MODEL = 'account.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': []}
 cors_allow_all_origins = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -70,7 +79,7 @@ CORS_TRUSTED_ORIGINS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'accounts.authentification.customAuthentification'
+        'accounts.authentication.customAuthentication'
         ]}
 
 import cloudinary
